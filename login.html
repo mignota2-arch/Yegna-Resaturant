@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Staff Login | Yegna Breakfast</title>
-    <link rel="stylesheet" href="style.css">
     <style>
         /* Specific Styles for Login Page */
         .login-body {
@@ -14,6 +13,7 @@
             justify-content: center;
             background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1350&q=80');
             background-size: cover;
+            margin: 0; /* Added to remove default browser margins */
         }
 
         .login-card {
@@ -40,6 +40,7 @@
             border: 1px solid #444;
             color: white;
             border-radius: 5px;
+            box-sizing: border-box; /* Ensures padding doesn't stretch the input */
         }
 
         .login-btn {
@@ -52,6 +53,7 @@
             cursor: pointer;
             margin-top: 20px;
             transition: 0.3s;
+            border-radius: 5px; /* Added for visual consistency */
         }
 
         .login-btn:hover {
@@ -87,7 +89,6 @@
             const pass = document.getElementById('password').value;
 
             // Simple Hardcoded Credentials for the project
-            // In a real app, this would check a database
             if (user === "admin" && pass === "yegna123") {
                 // Save login state so dashboard knows we are authorized
                 localStorage.setItem('isLoggedIn', 'true');
