@@ -269,17 +269,3 @@ if (contactForm) {
         contactForm.reset();
     });
 }
-document.addEventListener('DOMContentLoaded', () => {
-    // Only selects slides within our specific background carousel
-    const bgSlides = document.querySelectorAll('#background-only-carousel .bg-slide');
-    let currentBgIndex = 0;
-
-    function nextBackground() {
-        bgSlides[currentBgIndex].classList.remove('active');
-        currentBgIndex = (currentBgIndex + 1) % bgSlides.length;
-        bgSlides[currentBgIndex].classList.add('active');
-    }
-
-    // Fades to the next image every 5 seconds (5000ms)
-    setInterval(nextBackground, 5000);
-});
