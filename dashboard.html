@@ -168,4 +168,91 @@
         }
 
         .status.pending { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
-        .status.ready { background: rgba(40, 167, 69, 0.2); color: #28a745
+        .status.ready { background: rgba(40, 167, 69, 0.2); color: #28a745; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="top-nav">
+            <div class="logo">
+                <h2>Yegna Breakfast</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="active">Dashboard</a></li>
+                <li><a href="#">Active Orders</a></li>
+                <li><a href="#">Menu Management</a></li>
+                <li><a href="#">Settings</a></li>
+            </ul>
+        </div>
+        <button class="logout-btn" id="logoutBtn">Log Out</button>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Welcome Back, <span>Admin</span></h1>
+            <p id="live-date"></p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="card">
+                <h3>Active Orders</h3>
+                <p>12</p>
+            </div>
+            <div class="card">
+                <h3>Today's Revenue</h3>
+                <p>ETB 4,250</p>
+            </div>
+            <div class="card">
+                <h3>Tables Occupied</h3>
+                <p>8 / 15</p>
+            </div>
+        </div>
+
+        <div class="orders-section">
+            <h2>Recent Breakfast Orders</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Table</th>
+                        <th>Items Ordered</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Table 4</td>
+                        <td>2x Special Firfir, 2x Macchiato</td>
+                        <td>08:12 AM</td>
+                        <td><span class="status pending">Preparing</span></td>
+                    </tr>
+                    <tr>
+                        <td>Table 9</td>
+                        <td>1x Chechebsa, 1x Black Tea</td>
+                        <td>08:05 AM</td>
+                        <td><span class="status ready">Ready to Serve</span></td>
+                    </tr>
+                    <tr>
+                        <td>Table 2</td>
+                        <td>1x Scrambled Eggs, 1x Avocado Juice</td>
+                        <td>07:58 AM</td>
+                        <td><span class="status ready">Ready to Serve</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Display today's date dynamically
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('live-date').innerText = new Date().toLocaleDateString('en-US', options);
+
+        // LOGOUT FUNCTIONALITY
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            window.location.href = "login.html"; 
+        });
+    </script>
+</body>
+</html>
