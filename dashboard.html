@@ -664,5 +664,49 @@
       document.getElementById('badge-all').textContent = remainingCount;
     }
   </script>
+  <!-- 1. NAVIGATION SIDEBAR -->
+    <aside class="sidebar">
+      <div>
+        <div class="brand-section">
+          <div class="logo-circle">Y</div>
+          <div class="brand-text">
+            <h1>Yegna Breakfast</h1>
+            <span>Operations Dashboard</span>
+          </div>
+        </div>
+        
+        <nav class="station-nav">
+          <a href="#" class="nav-item active">
+            <span>All Live Orders</span>
+            <span class="nav-badge" id="badge-all">4</span>
+          </a>
+          <a href="#" class="nav-item">
+            <span>Kitchen Station</span>
+            <span class="nav-badge" id="badge-kitchen">2</span>
+          </a>
+          <a href="#" class="nav-item">
+            <span>Barista / Drinks</span>
+            <span class="nav-badge" id="badge-bar">1</span>
+          </a>
+          <a href="#" class="nav-item">
+            <span>Ready / Counter</span>
+            <span class="nav-badge" id="badge-ready">1</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- BOTTOM CONTROL LOGOUT SECTION -->
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="shift-info">
+          <div class="title">Live Shift</div>
+          <div style="font-size: 14px; font-weight:600;">Amanuel Gashaw</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top:2px;">Morning Shift · 06:00 – 12:00</div>
+        </div>
+
+        <a href="index.html" class="nav-item" style="border: 1px solid rgba(255, 82, 82, 0.2); color: #ff5252; background: rgba(255, 82, 82, 0.05); text-align: center; justify-content: center; padding: 10px;">
+          ← Exit to Main Site
+        </a>
+      </div>
+    </aside>
 </body>
 </html>
