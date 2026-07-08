@@ -1,382 +1,668 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Dashboard | Yegna Breakfast</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yegna Staff Portal | Live Operations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #0b0f19;
+      --bg-surface: rgba(22, 28, 45, 0.6);
+      --bg-surface-hover: rgba(30, 41, 67, 0.8);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-primary: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent-color: #ff9f43;
+      --accent-glow: rgba(255, 159, 67, 0.15);
+      
+      /* Status Colors matched to pipeline stages */
+      --status-pending: #ffb020;
+      --status-kitchen: #38ef7d;
+      --status-bar: #00f2fe;
+      --status-ready: #9b51e0;
+    }
 
-        body {
-            background-color: #121212;
-            color: #ffffff;
-            display: flex;
-            min-height: 100vh;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        /* Sidebar Styling */
-        .sidebar {
-            width: 250px;
-            background-color: #1a1a1a;
-            border-right: 1px solid rgba(214, 175, 55, 0.2);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: fixed;
-            height: 100vh;
-        }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-        .logo h2 {
-            color: #d4af37;
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 1.5rem;
-            letter-spacing: 1px;
-        }
+    /* 3-Column Grid Dashboard Wrapper */
+    .dashboard-wrapper {
+      display: grid;
+      grid-template-columns: 260px 1fr 340px;
+      min-height: 100vh;
+    }
 
-        .nav-links {
-            list-style: none;
-        }
+    /* ==========================================
+       1. SIDEBAR (Station Navigation Selector)
+    ========================================== */
+    .sidebar {
+      background-color: rgba(15, 22, 38, 0.95);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px;
+    }
 
-        .nav-links li a {
-            display: block;
-            color: #bbb;
-            text-decoration: none;
-            padding: 12px 15px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            transition: 0.3s;
-            cursor: pointer;
-        }
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
 
-        .nav-links li a.active, .nav-links li a:hover {
-            background: rgba(214, 175, 55, 0.1);
-            color: #d4af37;
-            font-weight: bold;
-        }
+    .logo-circle {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #ff9f43, #ff5252);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #fff;
+    }
 
-        .logout-btn {
-            background: #d4af37;
-            color: black;
-            border: none;
-            padding: 12px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            width: 100%;
-        }
+    .brand-text h1 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
 
-        .logout-btn:hover {
-            background: #b8962d;
-        }
+    .brand-text span {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
 
-        /* Main Content Styling */
-        .main-content {
-            flex-grow: 1;
-            margin-left: 250px; /* Leave room for fixed sidebar */
-            padding: 40px;
-            background: linear-gradient(rgba(18, 18, 18, 0.95), rgba(18, 18, 18, 0.95)), url('https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1350&q=80');
-            background-size: cover;
-            background-attachment: fixed;
-            min-height: 100vh;
-        }
+    .station-nav {
+      margin-top: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-grow: 1;
+    }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #333;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
 
-        .header h1 {
-            font-size: 2rem;
-        }
+    .nav-item:hover, .nav-item.active {
+      background-color: var(--bg-surface-hover);
+      color: var(--text-primary);
+    }
 
-        .header span {
-            color: #d4af37;
-        }
+    .nav-item.active {
+      border-left: 3px solid var(--accent-color);
+    }
 
-        /* Dynamic Content Content Views */
-        .content-view {
-            display: none; /* Hide all views by default */
-        }
+    .nav-badge {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+    }
 
-        .content-view.active-view {
-            display: block; /* Only show the active view */
-        }
+    .nav-item.active .nav-badge {
+      background-color: var(--accent-color);
+      color: #0b0f19;
+      font-weight: 600;
+    }
 
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
+    .shift-info {
+      background-color: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+    }
 
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 25px;
-            border-radius: 10px;
-            text-align: center;
-        }
+    .shift-info .title {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--accent-color);
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
 
-        .card h3 {
-            color: #888;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
+    /* ==========================================
+       2. MAIN WORKSPACE
+    ========================================== */
+    .main-workspace {
+      padding: 40px;
+      overflow-y: auto;
+      max-height: 100vh;
+    }
 
-        .card p {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #d4af37;
-        }
+    .workspace-header {
+      margin-bottom: 32px;
+    }
 
-        /* Panels / Tables Layout */
-        .dashboard-section {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 10px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            margin-bottom: 20px;
-        }
+    .date-pill {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
 
-        .dashboard-section h2 {
-            margin-bottom: 20px;
-            color: #d4af37;
-            font-size: 1.3rem;
-        }
+    .workspace-header h2 {
+      font-size: 28px;
+      font-weight: 700;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
+    /* Metric Cards Grid Layout */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 40px;
+    }
 
-        th, td {
-            padding: 15px;
-            border-bottom: 1px solid #333;
-        }
+    .metric-card {
+      background: var(--bg-surface);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      transition: transform 0.2s ease;
+    }
 
-        th {
-            color: #888;
-            font-weight: 600;
-        }
+    .metric-card:hover {
+      transform: translateY(-2px);
+    }
 
-        .status {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
+    .metric-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
 
-        .status.pending { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
-        .status.ready { background: rgba(40, 167, 69, 0.2); color: #28a745; }
-        .status.completed { background: rgba(0, 123, 255, 0.2); color: #007bff; }
+    .metric-value-container {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+    }
 
-        /* Action Buttons */
-        .action-btn {
-            background: none;
-            border: 1px solid #d4af37;
-            color: #d4af37;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+    .metric-value {
+      font-size: 32px;
+      font-weight: 700;
+    }
 
-        .action-btn:hover {
-            background: #d4af37;
-            color: black;
-        }
-    </style>
+    .metric-trend {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .trend-up { background-color: rgba(56, 239, 125, 0.1); color: #38ef7d; }
+    .trend-down { background-color: rgba(255, 82, 82, 0.1); color: #ff5252; }
+
+    /* Live Queue Pipeline Section */
+    .pipeline-container {
+      background: var(--bg-surface);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .pipeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .pipeline-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .pipeline-table th {
+      padding: 16px;
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .pipeline-table td {
+      padding: 20px 16px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 14px;
+    }
+
+    .customer-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Pipeline Status Badges */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .badge-pending { background: rgba(255, 176, 32, 0.1); color: var(--status-pending); }
+    .badge-pending::before { background: var(--status-pending); }
+
+    .badge-kitchen { background: rgba(56, 239, 125, 0.1); color: var(--status-kitchen); }
+    .badge-kitchen::before { background: var(--status-kitchen); }
+
+    .badge-bar { background: rgba(0, 242, 254, 0.1); color: var(--status-bar); }
+    .badge-bar::before { background: var(--status-bar); }
+
+    .badge-ready { background: rgba(155, 81, 224, 0.1); color: var(--status-ready); }
+    .badge-ready::before { background: var(--status-ready); }
+
+    .action-btn {
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      background-color: var(--accent-color);
+      color: #0b0f19;
+      border-color: var(--accent-color);
+    }
+
+    /* ==========================================
+       3. RIGHT SIDEBAR (Quick Order Entry Form)
+    ========================================== */
+    .right-sidebar {
+      background-color: rgba(15, 22, 38, 0.5);
+      border-left: 1px solid var(--border-color);
+      padding: 32px 24px;
+    }
+
+    .sidebar-form-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--accent-color);
+    }
+
+    .submit-order-btn {
+      width: 100%;
+      background-color: var(--accent-color);
+      color: #0b0f19;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+      margin-top: 12px;
+    }
+
+    .submit-order-btn:hover {
+      opacity: 0.9;
+    }
+
+    /* ==========================================
+       4. RESPONSIVE DESIGN MEDIA QUERIES
+    ========================================== */
+    @media (max-width: 1200px) {
+      .dashboard-wrapper {
+        grid-template-columns: 240px 1fr;
+      }
+      .right-sidebar {
+        grid-column: 2;
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+        background-color: rgba(15, 22, 38, 0.9);
+      }
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-wrapper {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .right-sidebar {
+        grid-column: 1;
+      }
+      .main-workspace {
+        padding: 20px;
+      }
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+      .pipeline-container {
+        overflow-x: auto;
+      }
+      .pipeline-table {
+        min-width: 600px;
+      }
+    }
+  </style>
 </head>
-     <link rel="icon" type="image/jpeg" href="https://ik.imagekit.io/AMAN2026/logo.jpg?updatedAt=1779612939257">
 <body>
 
-    <div class="sidebar">
-        <div class="top-nav">
-            <div class="logo">
-                <h2>Yegna Breakfast</h2>
-            </div>
-            <ul class="nav-links">
-                <li><a onclick="switchTab('dashboard')" id="tab-dashboard" class="active">Dashboard</a></li>
-                <li><a onclick="switchTab('orders')" id="tab-orders">Active Orders</a></li>
-                <li><a onclick="switchTab('menu')" id="tab-menu">Menu Management</a></li>
-                <li><a onclick="switchTab('settings')" id="tab-settings">Settings</a></li>
-            </ul>
+  <div class="dashboard-wrapper">
+    
+    <!-- 1. NAVIGATION SIDEBAR -->
+    <aside class="sidebar">
+      <div>
+        <div class="brand-section">
+          <div class="logo-circle">Y</div>
+          <div class="brand-text">
+            <h1>Yegna Breakfast</h1>
+            <span>Operations Dashboard</span>
+          </div>
         </div>
-        <button class="logout-btn" id="logoutBtn">Log Out</button>
-    </div>
+        
+        <nav class="station-nav">
+          <a href="#" class="nav-item active">
+            <span>All Live Orders</span>
+            <span class="nav-badge" id="badge-all">4</span>
+          </a>
+          <a href="#" class="nav-item">
+            <span>Kitchen Station</span>
+            <span class="nav-badge" id="badge-kitchen">2</span>
+          </a>
+          <a href="#" class="nav-item">
+            <span>Barista / Drinks</span>
+            <span class="nav-badge" id="badge-bar">1</span>
+          </a>
+          <a href="#" class="nav-item">
+            <span>Ready / Counter</span>
+            <span class="nav-badge" id="badge-ready">1</span>
+          </a>
+        </nav>
+      </div>
 
-    <div class="main-content">
-        <div class="header">
-            <h1 id="view-title">Staff <span>Dashboard</span></h1>
-            <p id="live-date"></p>
+      <div class="shift-info">
+        <div class="title">Live Shift</div>
+        <div style="font-size: 14px; font-weight:600;">Amanuel Gashaw</div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-top:2px;">Morning Shift · 06:00 – 12:00</div>
+      </div>
+    </aside>
+
+    <!-- 2. MAIN OPERATIONAL WORKSPACE -->
+    <main class="main-workspace">
+      <div class="workspace-header">
+        <div class="date-pill">Today · Live Processing</div>
+        <h2>Orders & Production Queue</h2>
+      </div>
+
+      <!-- PERFORMANCE METRICS ROW -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Active Tickets</div>
+          <div class="metric-value-container">
+            <div class="metric-value">4</div>
+            <div class="metric-trend trend-down">-2</div>
+          </div>
         </div>
-
-        <div id="view-dashboard" class="content-view active-view">
-            <div class="stats-grid">
-                <div class="card">
-                    <h3>Active Orders</h3>
-                    <p>12</p>
-                </div>
-                <div class="card">
-                    <h3>Today's Revenue</h3>
-                    <p>ETB 4,250</p>
-                </div>
-                <div class="card">
-                    <h3>Tables Occupied</h3>
-                    <p>8 / 15</p>
-                </div>
-            </div>
-
-            <div class="dashboard-section">
-                <h2>Recent Breakfast Activity</h2>
-                <p style="color:#aaa;">Welcome to the control center. Use the sidebar menu to update active plates or tweak menu availability items dynamically.</p>
-            </div>
+        <div class="metric-card">
+          <div class="metric-label">Completed Today</div>
+          <div class="metric-value-container">
+            <div class="metric-value">48</div>
+            <div class="metric-trend trend-up">+15%</div>
+          </div>
         </div>
-
-        <div id="view-orders" class="content-view">
-            <div class="dashboard-section">
-                <h2>Live Kitchen Orders Queue</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Table</th>
-                            <th>Items Ordered</th>
-                            <th>Time Placed</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Table 4</td>
-                            <td>2x Special Firfir, 2x Macchiato</td>
-                            <td>08:12 AM</td>
-                            <td><span class="status pending">Preparing</span></td>
-                            <td><button class="action-btn">Mark Ready</button></td>
-                        </tr>
-                        <tr>
-                            <td>Table 9</td>
-                            <td>1x Chechebsa, 1x Black Tea</td>
-                            <td>08:05 AM</td>
-                            <td><span class="status ready">Ready to Serve</span></td>
-                            <td><button class="action-btn">Complete</button></td>
-                        </tr>
-                        <tr>
-                            <td>Table 2</td>
-                            <td>1x Scrambled Eggs, 1x Avocado Juice</td>
-                            <td>07:58 AM</td>
-                            <td><span class="status completed">Served</span></td>
-                            <td><span style="color: #666; font-size: 0.9rem;">No Actions</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="metric-card">
+          <div class="metric-label">Avg Prep Speed</div>
+          <div class="metric-value-container">
+            <div class="metric-value">9m</div>
+            <div class="metric-trend trend-up">-1.5m</div>
+          </div>
         </div>
+        <div class="metric-card">
+          <div class="metric-label">Gross Income</div>
+          <div class="metric-value-container">
+            <div class="metric-value" style="font-size: 24px;">ETB 18,420</div>
+            <div class="metric-trend trend-up">+8%</div>
+          </div>
+        </div>
+      </div>
 
-        <div id="view-menu" class="content-view">
-            <div class="dashboard-section">
-                <h2>Menu Availability & Pricing</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Item Name</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Stock Status</th>
-                            <th>Toggle</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Special Firfir</td>
-                            <td>Breakfast Plate</td>
-                            <td>ETB 180.00</td>
-                            <td style="color: #28a745;">In Stock</td>
-                            <td><button class="action-btn">Set Out of Stock</button></td>
-                        </tr>
-                        <tr>
-                            <td>Chechebsa with Honey</td>
-                            <td>Breakfast Plate</td>
-                            <td>ETB 210.00</td>
-                            <td style="color: #28a745;">In Stock</td>
-                            <td><button class="action-btn">Set Out of Stock</button></td>
-                        </tr>
-                        <tr>
-                            <td>Macchiato</td>
-                            <td>Beverages</td>
-                            <td>ETB 45.00</td>
-                            <td style="color: #ffc107;">Running Low</td>
-                            <td><button class="action-btn">Set Out of Stock</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+      <!-- CENTRAL PIPELINE QUEUE TABLE -->
+      <section class="pipeline-container">
+        <div class="pipeline-header">
+          <h3 style="font-size: 18px; font-weight:600;">Active Pipeline Processing</h3>
+          <span style="color: var(--text-muted); font-size:13px;">4 pending entries</span>
         </div>
 
-        <div id="view-settings" class="content-view">
-            <div class="dashboard-section">
-                <h2>Portal Settings</h2>
-                <div style="padding: 10px 0; border-bottom: 1px solid #333;">
-                    <p><strong>Restaurant Name:</strong> Yegna Breakfast Cafe</p>
-                </div>
-                <div style="padding: 10px 0; border-bottom: 1px solid #333; margin-top: 10px;">
-                    <p><strong>System Language:</strong> English (US)</p>
-                </div>
-                <div style="padding: 10px 0; margin-top: 10px;">
-                    <p><strong>Printer Connection:</strong> <span style="color: #28a745;">Connected (Kitchen_Thermal_01)</span></p>
-                </div>
-            </div>
+        <table class="pipeline-table">
+          <thead>
+            <tr>
+              <th>Ticket ID</th>
+              <th>Source / Table</th>
+              <th>Menu Items Summary</th>
+              <th>Elapsed</th>
+              <th>Current Stage</th>
+              <th>Process Hand-off</th>
+            </tr>
+          </thead>
+          <tbody id="queue-rows">
+            <tr>
+              <td style="font-weight: 600;">#YG-1084</td>
+              <td>
+                <div>Table 04</div>
+                <div class="customer-meta">App Scan · Session 12</div>
+              </td>
+              <td>1x Special Chechebsa, 1x Macchiato</td>
+              <td>04 mins</td>
+              <td><span class="status-badge badge-kitchen">In Kitchen</span></td>
+              <td><button class="action-btn" onclick="advanceOrder(this)">Ready to Serve</button></td>
+            </tr>
+            <tr>
+              <td style="font-weight: 600;">#YG-1085</td>
+              <td>
+                <div>Table 09</div>
+                <div class="customer-meta">App Scan · Session 15</div>
+              </td>
+              <td>1x Full Medames, 1x Black Coffee</td>
+              <td>07 mins</td>
+              <td><span class="status-badge badge-bar">At Barista</span></td>
+              <td><button class="action-btn" onclick="advanceOrder(this)">Ready to Serve</button></td>
+            </tr>
+            <tr>
+              <td style="font-weight: 600;">#YG-1086</td>
+              <td>
+                <div>Counter 02</div>
+                <div class="customer-meta">Manual Key-In</div>
+              </td>
+              <td>2x Scrambled Eggs, 1x Spiced Tea</td>
+              <td>01 mins</td>
+              <td><span class="status-badge badge-pending">Awaiting Payment</span></td>
+              <td><button class="action-btn" onclick="advanceOrder(this)">Send to Cook</button></td>
+            </tr>
+            <tr>
+              <td style="font-weight: 600;">#YG-1087</td>
+              <td>
+                <div>Table 01</div>
+                <div class="customer-meta">App Scan · Session 08</div>
+              </td>
+              <td>1x Fitfit, 1x Avocado Juice</td>
+              <td>12 mins</td>
+              <td><span class="status-badge badge-ready">Ready at Counter</span></td>
+              <td><button class="action-btn" onclick="advanceOrder(this)">Archive Order</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <!-- 3. RIGHT SIDEBAR (Walk-in Entry Form) -->
+    <aside class="right-sidebar">
+      <h3 class="sidebar-form-title">Manual Order Override</h3>
+      
+      <form id="quick-order-form" onsubmit="handleManualSubmit(event)">
+        <div class="form-group">
+          <label for="table-num">Destination Reference</label>
+          <select id="table-num" class="form-select">
+            <option>Counter Walk-In</option>
+            <option>Table 01</option>
+            <option>Table 02</option>
+            <option>Table 03</option>
+            <option>Table 04</option>
+            <option>Table 05</option>
+          </select>
         </div>
 
-    </div>
+        <div class="form-group">
+          <label for="breakfast-item">Select Breakfast Item</label>
+          <select id="breakfast-item" class="form-select">
+            <option value="Chechebsa">Special Chechebsa</option>
+            <option value="Ful">Full Medames</option>
+            <option value="Fitfit">Firfir</option>
+            <option value="Eggs">Scrambled Eggs</option>
+          </select>
+        </div>
 
-    <script>
-        // Set the dynamic date on header load
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('live-date').innerText = new Date().toLocaleDateString('en-US', options);
+        <div class="form-group">
+          <label for="drink-item">Select Drink</label>
+          <select id="drink-item" class="form-select">
+            <option value="Macchiato">Macchiato</option>
+            <option value="Black Coffee">Black Coffee</option>
+            <option value="Tea">Spiced Tea</option>
+            <option value="Juice">Avocado Juice</option>
+          </select>
+        </div>
 
-        // Core Tab Switching Controller Function
-        function switchTab(tabName) {
-            // 1. Hide all text block views
-            const views = document.querySelectorAll('.content-view');
-            views.forEach(view => view.classList.remove('active-view'));
+        <div class="form-group">
+          <label for="order-notes">Special Staff Instructions</label>
+          <input type="text" id="order-notes" class="form-input" placeholder="e.g., extra butter, no sugar">
+        </div>
 
-            // 2. Remove highlighted active states from sidebar text links
-            const tabs = document.querySelectorAll('.nav-links li a');
-            tabs.forEach(tab => tab.classList.remove('active'));
+        <button type="submit" class="submit-order-btn">Inject Into Pipeline</button>
+      </form>
+    </aside>
 
-            // 3. Unhide targeted view and highlight selected tab
-            document.getElementById(`view-${tabName}`).classList.add('active-view');
-            document.getElementById(`tab-${tabName}`).classList.add('active');
+  </div>
 
-            // 4. Update the page title banner seamlessly
-            const titleElement = document.getElementById('view-title');
-            if (tabName === 'dashboard') titleElement.innerHTML = "Staff <span>Dashboard</span>";
-            if (tabName === 'orders') titleElement.innerHTML = "Active <span>Orders Queue</span>";
-            if (tabName === 'menu') titleElement.innerHTML = "Menu <span>Management</span>";
-            if (tabName === 'settings') titleElement.innerHTML = "System <span>Settings</span>";
-        }
+  <script>
+    // Simple state changes for the UI hand-off buttons
+    function advanceOrder(buttonElement) {
+      const row = buttonElement.closest('tr');
+      const badge = row.querySelector('.status-badge');
+      
+      if (badge.classList.contains('badge-pending')) {
+        badge.className = 'status-badge badge-kitchen';
+        badge.textContent = 'In Kitchen';
+        buttonElement.textContent = 'Ready to Serve';
+      } else if (badge.classList.contains('badge-kitchen') || badge.classList.contains('badge-bar')) {
+        badge.className = 'status-badge badge-ready';
+        badge.textContent = 'Ready at Counter';
+        buttonElement.textContent = 'Archive Order';
+      } else {
+        row.remove();
+        updateRowCounts();
+      }
+    }
 
-        // Handle logout cleanup action
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            window.location.href = "login.html"; 
-        });
-    </script>
+    function handleManualSubmit(e) {
+      e.preventDefault();
+      const destination = document.getElementById('table-num').value;
+      const food = document.getElementById('breakfast-item').value;
+      const drink = document.getElementById('drink-item').value;
+      const randId = Math.floor(1000 + Math.random() * 9000);
+
+      const newRowHTML = `
+        <tr>
+          <td style="font-weight: 600;">#YG-${randId}</td>
+          <td>
+            <div>${destination}</div>
+            <div class="customer-meta">Manual Key-In</div>
+          </td>
+          <td>1x ${food}, 1x ${drink}</td>
+          <td>00 mins</td>
+          <td><span class="status-badge badge-kitchen">In Kitchen</span></td>
+          <td><button class="action-btn" onclick="advanceOrder(this)">Ready to Serve</button></td>
+        </tr>
+      `;
+
+      document.getElementById('queue-rows').insertAdjacentHTML('afterbegin', newRowHTML);
+      document.getElementById('quick-order-form').reset();
+      updateRowCounts();
+    }
+
+    function updateRowCounts() {
+      const remainingCount = document.querySelectorAll('#queue-rows tr').length;
+      document.getElementById('badge-all').textContent = remainingCount;
+    }
+  </script>
 </body>
 </html>
