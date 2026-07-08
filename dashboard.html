@@ -432,29 +432,36 @@
         </div>
         
         <nav class="station-nav">
-          <a href="#" class="nav-item active">
+          <a href="#" class="nav-item active" data-filter="all">
             <span>All Live Orders</span>
             <span class="nav-badge" id="badge-all">4</span>
           </a>
-          <a href="#" class="nav-item">
+          <a href="#" class="nav-item" data-filter="badge-kitchen">
             <span>Kitchen Station</span>
             <span class="nav-badge" id="badge-kitchen">2</span>
           </a>
-          <a href="#" class="nav-item">
+          <a href="#" class="nav-item" data-filter="badge-bar">
             <span>Barista / Drinks</span>
             <span class="nav-badge" id="badge-bar">1</span>
           </a>
-          <a href="#" class="nav-item">
+          <a href="#" class="nav-item" data-filter="badge-ready">
             <span>Ready / Counter</span>
             <span class="nav-badge" id="badge-ready">1</span>
           </a>
         </nav>
       </div>
 
-      <div class="shift-info">
-        <div class="title">Live Shift</div>
-        <div style="font-size: 14px; font-weight:600;">Amanuel Gashaw</div>
-        <div style="font-size: 12px; color: var(--text-muted); margin-top:2px;">Morning Shift · 06:00 – 12:00</div>
+      <!-- BOTTOM CONTROL LOGOUT SECTION -->
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="shift-info">
+          <div class="title">Live Shift</div>
+          <div style="font-size: 14px; font-weight:600;">Amanuel Gashaw</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top:2px;">Morning Shift · 06:00 – 12:00</div>
+        </div>
+
+        <a href="index.html" class="nav-item" style="border: 1px solid rgba(255, 82, 82, 0.2); color: #ff5252; background: rgba(255, 82, 82, 0.05); text-align: center; justify-content: center; padding: 10px;">
+          ← Exit to Main Site
+        </a>
       </div>
     </aside>
 
@@ -585,10 +592,11 @@
         <div class="form-group">
           <label for="breakfast-item">Select Breakfast Item</label>
           <select id="breakfast-item" class="form-select">
-            <option value="Chechebsa">Special Chechebsa</option>
-            <option value="Ful">Full Medames</option>
-            <option value="Fitfit">Firfir</option>
-            <option value="Eggs">Scrambled Eggs</option>
+            <option value="Special Chechebsa">Special Chechebsa</option>
+            <option value="Full Medames">Full Medames</option>
+            <option value="Firfir">Firfir</option>
+            <option value="Scrambled Eggs">Scrambled Eggs</option>
+            <option value="None">None (Drink Only)</option>
           </select>
         </div>
 
@@ -597,8 +605,9 @@
           <select id="drink-item" class="form-select">
             <option value="Macchiato">Macchiato</option>
             <option value="Black Coffee">Black Coffee</option>
-            <option value="Tea">Spiced Tea</option>
-            <option value="Juice">Avocado Juice</option>
+            <option value="Spiced Tea">Spiced Tea</option>
+            <option value="Avocado Juice">Avocado Juice</option>
+            <option value="None">None (Food Only)</option>
           </select>
         </div>
 
@@ -614,7 +623,33 @@
   </div>
 
   <script>
-    // Simple state changes for the UI hand-off buttons
+    // 1. DYNAMIC NAVIGATION FILTERING LOGIC
+    document.querySelectorAll('.nav-item[data-filter]').forEach(navLink => {
+      navLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        // Switch active class styling on the tabs
+        document.querySelectorAll('.nav-item').forEach(link => link.classList.remove('active'));
+        navLink.classList.add('active');
+        
+        const filterType = navLink.getAttribute('data-filter');
+        const rows = document.querySelectorAll('#queue-rows tr');
+        
+        // Show or hide rows matching the selected station badge type
+        rows.forEach(row => {
+          const badge = row.querySelector('.status-badge');
+          if (filterType === 'all') {
+            row.style.display = ''; // Show all
+          } else if (badge && badge.classList.contains(filterType)) {
+            row.style.display = ''; // Match found
+          } else {
+            row.style.display = 'none'; // Hide non-matching row
+          }
+        });
+      });
+    });
+
+    // 2. ADVANCE ORDER STAGES
     function advanceOrder(buttonElement) {
       const row = buttonElement.closest('tr');
       const badge = row.querySelector('.status-badge');
@@ -629,16 +664,29 @@
         buttonElement.textContent = 'Archive Order';
       } else {
         row.remove();
-        updateRowCounts();
       }
+      
+      // Refresh counts and re-apply current filter view smoothly
+      updateRowCounts();
+      const activeFilter = document.querySelector('.nav-item.active').getAttribute('data-filter');
+      document.querySelector(`.nav-item[data-filter="${activeFilter}"]`).click();
     }
 
+    // 3. MANUAL INJECTION FORM HANDLER
     function handleManualSubmit(e) {
       e.preventDefault();
       const destination = document.getElementById('table-num').value;
       const food = document.getElementById('breakfast-item').value;
       const drink = document.getElementById('drink-item').value;
       const randId = Math.floor(1000 + Math.random() * 9000);
+
+      // Default logic paths based on item choice
+      let stationClass = 'badge-kitchen';
+      let stationText = 'In Kitchen';
+      if (food === 'None' && drink !== 'None') {
+        stationClass = 'badge-bar';
+        stationText = 'At Barista';
+      }
 
       const newRowHTML = `
         <tr>
@@ -649,64 +697,44 @@
           </td>
           <td>1x ${food}, 1x ${drink}</td>
           <td>00 mins</td>
-          <td><span class="status-badge badge-kitchen">In Kitchen</span></td>
+          <td><span class="status-badge ${stationClass}">${stationText}</span></td>
           <td><button class="action-btn" onclick="advanceOrder(this)">Ready to Serve</button></td>
         </tr>
       `;
 
       document.getElementById('queue-rows').insertAdjacentHTML('afterbegin', newRowHTML);
       document.getElementById('quick-order-form').reset();
+      
+      // Recalculate totals and reset view filters safely
       updateRowCounts();
+      document.querySelector('.nav-item[data-filter="all"]').click();
     }
 
+    // 4. DYNAMIC BADGE COUNT CALCULATION
     function updateRowCounts() {
-      const remainingCount = document.querySelectorAll('#queue-rows tr').length;
-      document.getElementById('badge-all').textContent = remainingCount;
+      const rows = document.querySelectorAll('#queue-rows tr');
+      let all = rows.length;
+      let kitchen = 0;
+      let bar = 0;
+      let ready = 0;
+
+      rows.forEach(row => {
+        const badge = row.querySelector('.status-badge');
+        if (badge) {
+          if (badge.classList.contains('badge-kitchen')) kitchen++;
+          if (badge.classList.contains('badge-bar')) bar++;
+          if (badge.classList.contains('badge-ready')) ready++;
+        }
+      });
+
+      document.getElementById('badge-all').textContent = all;
+      document.getElementById('badge-kitchen').textContent = kitchen;
+      document.getElementById('badge-bar').textContent = bar;
+      document.getElementById('badge-ready').textContent = ready;
     }
+
+    // Initial item tally sweep on interface load
+    updateRowCounts();
   </script>
-  <!-- 1. NAVIGATION SIDEBAR -->
-    <aside class="sidebar">
-      <div>
-        <div class="brand-section">
-          <div class="logo-circle">Y</div>
-          <div class="brand-text">
-            <h1>Yegna Breakfast</h1>
-            <span>Operations Dashboard</span>
-          </div>
-        </div>
-        
-        <nav class="station-nav">
-          <a href="#" class="nav-item active">
-            <span>All Live Orders</span>
-            <span class="nav-badge" id="badge-all">4</span>
-          </a>
-          <a href="#" class="nav-item">
-            <span>Kitchen Station</span>
-            <span class="nav-badge" id="badge-kitchen">2</span>
-          </a>
-          <a href="#" class="nav-item">
-            <span>Barista / Drinks</span>
-            <span class="nav-badge" id="badge-bar">1</span>
-          </a>
-          <a href="#" class="nav-item">
-            <span>Ready / Counter</span>
-            <span class="nav-badge" id="badge-ready">1</span>
-          </a>
-        </nav>
-      </div>
-
-      <!-- BOTTOM CONTROL LOGOUT SECTION -->
-      <div style="display: flex; flex-direction: column; gap: 16px;">
-        <div class="shift-info">
-          <div class="title">Live Shift</div>
-          <div style="font-size: 14px; font-weight:600;">Amanuel Gashaw</div>
-          <div style="font-size: 12px; color: var(--text-muted); margin-top:2px;">Morning Shift · 06:00 – 12:00</div>
-        </div>
-
-        <a href="index.html" class="nav-item" style="border: 1px solid rgba(255, 82, 82, 0.2); color: #ff5252; background: rgba(255, 82, 82, 0.05); text-align: center; justify-content: center; padding: 10px;">
-          ← Exit to Main Site
-        </a>
-      </div>
-    </aside>
 </body>
 </html>
