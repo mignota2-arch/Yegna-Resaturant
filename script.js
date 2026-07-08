@@ -269,3 +269,10 @@ if (contactForm) {
         contactForm.reset();
     });
 }
+// ==========================================
+// ☁️ SUPABASE REAL-TIME RESTAURANT DATABASE
+// ==========================================
+const SUPABASE_URL = "https://iwyvslpajurswqgchivn.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3eXZzbHBhanVyc3dxZ2NoaXZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MzI0OTYsImV4cCI6MjA5NTIxODQ5Nn0.VfQZ1v68M6FfS8vA_q02G09j4e4-M2g8S_wO5p1_zSg";
+
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
