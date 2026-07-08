@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Menu | Yegna</title>
+    <title>Digital Menu | Yegna Breakfast</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/jpeg" href="https://ik.imagekit.io/AMAN2026/logo.jpg?updatedAt=1779612939257">
 </head>
-      <link rel="icon" type="image/jpeg" href="https://ik.imagekit.io/AMAN2026/logo.jpg?updatedAt=1779612939257">
 <body>
 
     <header>
@@ -16,53 +16,61 @@
                 <li><a href="index.html">Home</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="contact.html">Contact</a></li>
-                <li><a href="login.html">Staff</a></li>
+                <li><a href="login.html">Staff Portal</a></li>
             </ul>
         </nav>
     </header>
 
-    <!-- Category Navigation (Injected by JS) -->
     <div class="category-nav" id="categoryNav"></div>
 
-    <!-- Menu Items Grid (Injected by JS) -->
-    <div class="menu-grid" id="menuGrid"></div>
+    <main class="menu-grid" id="menuGrid"></main>
 
-    <!-- Floating Cart Bar -->
     <div class="cart-bar" id="cartBar" onclick="toggleCartModal()">
         <span id="cartCount">0 Items</span>
         <span id="cartTotal">0 ETB</span>
         <button class="view-cart-btn">View Cart</button>
     </div>
 
-    <!-- Cart Modal -->
     <div class="cart-modal-overlay" id="cartModal">
         <div class="cart-modal-content">
             <div class="cart-header">
-                <h2>Your Order</h2>
+                <h2>Your Selected Order</h2>
                 <span class="close-modal" onclick="toggleCartModal()">&times;</span>
             </div>
 
             <div id="cartItemsList"></div>
 
             <div class="cart-footer">
-                <div class="checkout-area">
-                    <label for="customerPhone" style="color:#d4af37; display:block; margin-bottom:5px;">Contact Number:</label>
+                <div class="checkout-area" style="margin-top: 15px; text-align: left;">
+                    <label for="customerPhone" style="color:#d4af37; display:block; margin-bottom:5px; font-weight: 500;">
+                        Contact Number (Optional):
+                    </label>
                     <input type="tel" id="customerPhone" placeholder="0911-00-00-00"
-                           style="width:100%; padding:10px; margin-bottom:15px; background:#222;
-                                  border:1px solid #d4af37; color:white; border-radius:5px;">
+                           style="width:100%; padding:12px; margin-bottom:15px; background:#1a1a1a;
+                                  border:1px solid #333; color:white; border-radius:5px; font-size:14px;">
+                    
+                    <label for="tableNumber" style="color:#d4af37; display:block; margin-bottom:5px; font-weight: 500;">
+                        Table Number (Required):
+                    </label>
+                    <input type="text" id="tableNumber" placeholder="e.g., 3, 5, Counter" required
+                           style="width:100%; padding:12px; margin-bottom:20px; background:#1a1a1a;
+                                  border:1px solid #333; color:white; border-radius:5px; font-size:14px;">
                 </div>
-                <h3>Total: <span id="modalTotal">0</span> ETB</h3>
-                <input type="text" id="tableNumber" placeholder="Enter Table Number" required
-                       style="width:100%; padding:10px; margin:15px 0; background:#2a2a2a;
-                              color:white; border:1px solid #444;">
-                <button class="btn" style="width:100%;" onclick="placeOrder()">Send Order to Kitchen</button>
+
+                <h3 style="margin-bottom: 20px; font-size: 20px;">
+                    Total Amount: <span id="modalTotal" style="color:#d4af37;">0</span> ETB
+                </h3>
+                
+                <button class="btn" id="checkoutSubmitBtn" style="width:100%; padding:14px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">
+                    Send Order to Kitchen
+                </button>
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  
-
+    
     <script src="script.js"></script>
+
 </body>
 </html>
